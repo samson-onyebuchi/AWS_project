@@ -5,6 +5,8 @@ import requests
 app = Flask(__name__)
 faker = Faker()
 
+url = 'https://fakerapi.it/api/v1/'
+
 @app.route('/category/categories')
 def get_categories():
     category_tree = build_category_tree()
@@ -30,14 +32,32 @@ def build_category_tree(parent_id=None, level=0):
 
 @app.route('/category/<int:category_id>/products', methods=['GET'])
 def retrieve_products_by_category(category_id):
-    base_url = 'https://fakerapi.it/api/v1/'
+    global url
+    base_url = url
     endpoint = f'products?_quantity=10&category_ids={category_id}'
     url = base_url + endpoint
 
     try:
         response = requests.get(url)
-        response.raise_for_status()  # Raise exception for non-2xx status codes
+        response.raise_for_status()  
         products = response.json()
         return jsonify(products['data'])
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+@app.route('/product/<int:product_id>', methods=['GET'])
+def retrieve_product_details(product_id):
+    global url
+    base_url = url 
+    endpoint = f'products/{product_id}'
+    url = base_url + endpoint
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  
+        product = response.json()
+        return jsonify(product)
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e)}), 500
