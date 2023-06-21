@@ -15,5 +15,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 class Config(object):
-    MONGO_URI = os.environ.get('MONGO_URI')
+    URL = os.environ.get('URL')
+    EXCHANGE_RATES_URL = os.environ.get('EXCHANGE_RATES_URL')
     BASE_URI = "http://127.0.0.1:5000"
